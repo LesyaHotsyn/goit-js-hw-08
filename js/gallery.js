@@ -66,37 +66,35 @@ const images = [
 
 const list = document.querySelector(".js-prodacts");
 
-const createMarkup = (images) => {
-  return images
-    .map(
-      ({ preview, original, description }) => `
-    <li class="gallery-item">
-      <a class="gallery-link" href="${original}">
-        <img
-          class="gallery-image"
-          src="${preview}"
-          data-source="${original}"
-          alt="${description}"
-        />
-      </a>
-    </li>
-  `
-    )
-    .join("");
-};
+const createMarkup = images
+  .map(({ preview, original, description }) => {
+    return `
+      <li class="gallery-item">
+        <a class="gallery-link" href="${original}">
+          <img
+            class="gallery-image"
+            src="${preview}"
+            data-source="${original}"
+            alt="${description}"
+          />
+        </a>
+      </li>
+    `;
+  })
+  .join("");
 
-list.innerHTML = createMarkup(images);
+list.innerHTML = createMarkup;
+
+function openModal(url) {
+  const instance = basicLightbox.create(`
+      <img src="${url}" width="800" height="600">
+    `);
+  instance.show();
+}
 
 list.addEventListener("click", (event) => {
   event.preventDefault();
-
-  if (event.target.classList.contains("gallery-image")) {
-    const originalImageURL = event.target.dataset.source;
-    console.log(originalImageURL); // Виводимо посилання на велике зображення у консоль
-
-    const lightBox = basicLightbox.create(
-      `<img src="${originalImageURL}" width="1112" height="640">`
-    );
-    lightBox.show();
-  }
+  if (event.target.nodeName !== "IMG") return;
+  const largeImageURL = event.target.dataset.source;
+  openModal(largeImageURL);
 });
